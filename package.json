@@ -6,9 +6,6 @@
   "scripts": {
     "start": "node server"
   },
-  "engines": {
-    "node": "15.x"
-  },
   "keywords": [],
   "author": "Yaroslav Moiseev",
   "license": "ISC",

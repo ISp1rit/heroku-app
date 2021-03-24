@@ -1,21 +1,40 @@
-const http = require("http");
-const express = require( "express");
-const WebSocket = require( "ws");
+const http = require('http');
+const express = require('express');
+
+const {createWss} = require('./websocket');
+
+const port = process.env.PORT || 8080;
 
 const app = express();
 
-const server = http.createServer(app);
+app.use(express.static('public'));
 
-const webSocketServer = new WebSocket.Server({ server });
-
-webSocketServer.on('connection', ws => {
-   ws.on('message', m => {
-      webSocketServer.clients.forEach(client => client.send(m));
-   });
-
-   ws.on("error", e => ws.send(e));
-
-   ws.send('Hi there, I am a WebSocket server');
+app.get('/', (req, res) => {
+   res.send('Heroku App');
 });
 
-server.listen(7777, () => console.log("Server started"));
+app.get('/todos', (req, res) => {
+    const todos = [
+        {id: 1, name: 'Todo 1'}
+    ];
+
+    res.send(todos);
+});
+
+app.post('/todos', function (req, res) {
+   const newTodo = {
+      id: 2,
+      name: 'Todo 2'
+   };
+
+   res.set('Access-Control-Allow-Origin', '*');
+   res.send(newTodo);
+});
+
+const server = http.createServer(app);
+
+createWss(server);
+
+server.listen(port, () => {
+    console.info('Server started successfully', port);
+});
